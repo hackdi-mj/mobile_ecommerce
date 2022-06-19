@@ -6,6 +6,7 @@ class Services {
   static int limit = 4;
   static var client = http.Client();
 
+// fetch rest api
   static Future<List<Product>> fetchProducts() async {
     var response = await client
         .get(Uri.parse("https://fakestoreapi.com/products?limit=$limit"));

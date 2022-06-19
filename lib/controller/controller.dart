@@ -5,7 +5,6 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ProductController extends GetxController {
   var productList = List<Product>.empty().obs;
-  int limit = Services.limit;
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
 
@@ -15,6 +14,7 @@ class ProductController extends GetxController {
     super.onInit();
   }
 
+// fetch Api
   void fetchProducts() async {
     var product = await Services.fetchProducts();
     if (product != null) {
@@ -22,6 +22,7 @@ class ProductController extends GetxController {
     }
   }
 
+//  refresh
   void onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
@@ -31,6 +32,7 @@ class ProductController extends GetxController {
     fetchProducts();
   }
 
+// load more pagination
   void onLoading() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
