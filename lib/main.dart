@@ -13,6 +13,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Ecommerce',
         themeMode: ThemeMode.light,
-        home: HomePage());
+        home: const HomePage());
   }
 }

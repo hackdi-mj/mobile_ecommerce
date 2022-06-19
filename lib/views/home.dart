@@ -1,32 +1,50 @@
 import 'package:ecommerce/controller/controller.dart';
 import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/views/mywidget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final ProductController _productController = Get.put(ProductController());
+  final MyWidget _myWidget = MyWidget();
 
   @override
   Widget build(BuildContext context) {
-    // for read a size of width devices
+    // read a width device
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Ecommerce App'),
+        title: const Text('Ecommerce App'),
         backgroundColor: Colors.green.shade700,
       ),
-      body: Container(
-        decoration: BoxDecoration(),
-        child: Obx(
-          () => ListView.builder(
-            physics: BouncingScrollPhysics(),
+      body: Obx(
+        () => SmartRefresher(
+          enablePullDown: true,
+          enablePullUp: true,
+          header: WaterDropHeader(),
+          controller: _productController.refreshController,
+          onRefresh: _productController.onRefresh,
+          onLoading: _productController.onLoading,
+          child: ListView.builder(
+            physics: const BouncingScrollPhysics(),
             itemCount: _productController.productList.length,
             itemBuilder: (BuildContext context, i) {
               return Align(
                 child: SizedBox(
-                  width: width <= 400 ? width / 1 : width / 1.8,
+                  width: width < 450
+                      ? width / 1
+                      : width > 500 && width < 600
+                          ? width / 1.2
+                          : width / 1.5,
                   child: _productCard(
                     product: _productController.productList[i],
                   ),
@@ -56,7 +74,7 @@ class HomePage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _imageTile(
+          _myWidget.imageTile(
             img: '${product.image}',
             price: '${product.price}',
           ),
@@ -71,124 +89,16 @@ class HomePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _cardTile(
+                  _myWidget.cardTile(
                     title: '${product.title}',
                     description: '${product.description}',
                   ),
-                  _iconText(
+                  _myWidget.iconText(
                     mainAxisAlignment: MainAxisAlignment.end,
                     icon: Icons.star,
                     value: '${product.rating.rate}',
                   ),
                 ],
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _imageTile({
-    required String img,
-    required String price,
-  }) {
-    return Container(
-      margin: EdgeInsets.all(10),
-      decoration: BoxDecoration(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            child: _iconText(
-              mainAxisAlignment: MainAxisAlignment.start,
-              icon: Icons.attach_money,
-              value: price,
-            ),
-          ),
-          Container(
-            height: 120,
-            width: 120,
-            margin: EdgeInsets.only(
-              top: 10,
-            ),
-            child: Image.network(
-              img,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _cardTile({
-    required String title,
-    required String description,
-  }) {
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            child: Text(
-              title,
-              maxLines: 2,
-              textAlign: TextAlign.justify,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              top: 10,
-              bottom: 10,
-            ),
-            child: Text(
-              description,
-              maxLines: 4,
-              textAlign: TextAlign.justify,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _iconText({
-    required IconData icon,
-    required String value,
-    required MainAxisAlignment mainAxisAlignment,
-  }) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: mainAxisAlignment,
-        children: [
-          Container(
-            height: 15,
-            child: FittedBox(
-              fit: BoxFit.fitHeight,
-              child: Icon(
-                icon,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-              left: 2,
-            ),
-            height: 15,
-            child: FittedBox(
-              fit: BoxFit.fitHeight,
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ),
           )
