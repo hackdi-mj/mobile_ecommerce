@@ -6,8 +6,6 @@ Supported Features : Show Product Card and Pagination Page
 
 Requirement :
 
-sqlite 
-
 rest API : https://fakestoreapi.com/products 
 
 State Management : GetX 
